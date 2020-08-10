@@ -1,0 +1,195 @@
+<html>
+    <head>
+        <title>
+            Online Calculator
+        </title>
+        <style>
+            .main{
+                float: left;
+                width: 200px;
+                padding: 20px;
+                margin: 20px auto;
+                margin-left: 30%;
+                background-color: cornflowerblue;
+                font-family: 'Open Sans',sans-serif;
+                border-radius: 5px;
+            }
+            .display{
+                margin-top: 10px;
+                padding: 10px;
+                background-color: whitesmoke;
+                
+                border-radius: 5px;
+            }
+            #output{
+                width: 250px;
+                overflow: hidden;
+                height: 20px;
+            }
+            #history{
+                width: 250px;
+                overflow: hidden;
+                color: gray;
+                height: 20px;
+            }
+            hr{
+                border: 1px solid rgb(210, 211, 204);
+            }
+            .number-screen{
+                padding: 10px;
+                font-size: 30px;
+            }
+            button{
+                margin: 5px;
+                padding: 15px 16px;
+                border: 1px salmon;
+                
+                font-size: 20px;
+            }
+            .operator-screen{
+                margin-top: 100px;
+                margin-left: 30px;
+                float: left;
+                background-color: cornflowerblue;
+                padding: 20px;
+                padding-right: 10px;
+                width: 180px;
+                border-radius: 5px;
+                /* position: sticky;
+                left: 780px;
+                top: -250px; */
+            }
+        </style>
+    </head>
+    <body id="keyboard">
+        <div class="main">
+            <div class="display">
+                <div id="history">
+                    
+                </div>
+                <hr>
+                <div id="output">
+                    
+                </div>
+            </div>
+            <div class="number-screen">
+                <button id="1" class="number">1</button>
+                <button id="2" class="number">2</button>
+                <button id="3" class="number">3</button>
+                <button id="4" class="number">4</button>
+                <button id="5" class="number">5</button>
+                <button id="6" class="number">6</button>
+                <button id="7" class="number">7</button>
+                <button id="8" class="number">8</button>
+                <button id="9" class="number">9</button>
+                <button class="operator" id="clear" style="font-size: 18px;">C</button>
+                <button id="0" class="number">0</button>
+                <button class="operator" id="backspace" style="font-size: 15px; padding: 18px 11px;">CE</button>
+            </div>
+            
+        </div>
+        <div class="operator-screen">
+            <button class="operator" id="+">+</button>
+            <button class="operator" id="-" style="padding-right: 20px;">-</button>
+            <button class="operator" id="*" style="padding-right: 20px;">*</button>
+            <button class="operator" id="/" style="font-size: 15px; padding: 18px 20px;">/</button>
+            <button class="operator" id="%" style="font-size: 15px; padding: 18px 15px;">%</button>
+            <button class="operator" id="=">=</button>
+        </div>
+        <script>
+            document.getElementById('keyboard').addEventListener('keypress', action_func);
+            var operators = ['+','-','*','/','%','=']
+            function get_history(){
+                return document.getElementById('history').innerText;
+            }
+            function get_output(){
+                return document.getElementById('output').innerText;
+            }
+            function write_history(hist){
+                document.getElementById('history').innerText = hist;
+            }
+            function write_output(out){
+                document.getElementById('output').innerText = out;
+            }
+            function action_func(event){
+                
+                let key = String.fromCharCode(event.keyCode);
+                console.log(event.keyCode == 13);
+                if(key>=0 && key <=9){
+                    write_output(get_output() + key);
+                }
+                else if(operators.indexOf(key)>=0 || event.keyCode == 13){
+                    let output=get_output();
+                    let history=get_history();
+                    if(output==""&&history!=""){
+				        if(isNaN(history[history.length-1])){
+					        history= history.substr(0,history.length-1);
+				        }
+			        }
+			        if(output!="" || history!=""){
+				        history=history+output;
+				        if(key=="=" || event.keyCode === 13){
+					        let result=eval(history);
+					        write_output(result);
+					        write_history("");
+				        }
+				        else{
+					        history=history+key;
+                            write_history(history);
+                            write_output("");
+				        }
+			        }
+                }
+            }
+            var operator = document.getElementsByClassName("operator");
+            for(var i =0;i<operator.length;i++){
+            	operator[i].addEventListener('click',function(){
+            		if(this.id=="clear"){
+            			write_output("");
+            			write_history("");
+            		}
+            		else if(this.id=="backspace"){
+            			let output=get_output();
+            			if(output){//if output has a value
+            				output= output.substr(0,output.length-1);
+            				write_output(output);
+            			}
+            		}
+            		else{
+            			let output=get_output();
+            			let history=get_history();
+            			if(output==""&&history!=""){
+            				if(isNaN(history[history.length-1])){
+            					history= history.substr(0,history.length-1);
+            				}
+            			}
+            			if(output!="" || history!=""){
+            				history=history+output;
+            				if(this.id=="="){
+            					var result=eval(history);
+            					write_output(result);
+            					write_history("");
+            				}
+            				else{
+            					history=history+this.id;
+            					write_history(history);
+            					write_output("");
+            				}
+            			}
+            		}
+                
+            	});
+            }
+        var number = document.getElementsByClassName("number");
+        for(var i =0;i<number.length;i++){
+	        number[i].addEventListener('click',function(){
+		    var output=get_output();
+		    if(output!=NaN){ //if output is a number
+			    output=output+this.id;
+			    write_output(output);
+		    }
+	        });
+        }
+        </script>
+    </body>
+</html>
